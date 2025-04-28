@@ -1,7 +1,7 @@
-import './JournalForm.css';
+import styles from './JournalForm.module.css';
 import Button from '../Button/Button';
 import { useState } from 'react';
-
+import cn from 'classnames';
 
 function JournalForm({ onSubmit }) {
 	const [formValidState, setFormValidState] = useState({
@@ -14,63 +14,76 @@ function JournalForm({ onSubmit }) {
 		const formData = new FormData(e.target);
 		const formProps = Object.fromEntries(formData);
 		let isFormValid = true;
+
+		// Проверка поля title
 		if (!formProps.title?.trim().length) {
-			setFormValidState(state => ({ ...state, title: false })); // setFormValidState({ ...isFormValid = false;
+			setFormValidState(state => ({ ...state, title: false }));
+			isFormValid = false; // Устанавливаем флаг в false при ошибке валидации
 		} else {
-			setFormValidState(state => ({ ...state, title: true })); // setFormValidState({ ...isFormValid = true;
+			setFormValidState(state => ({ ...state, title: true }));
 		}
-		// if (!formProps.tag?.trim().length) {
-		// 	setFormValidState(state => ({ ...state, tag: false })); // setFormValidState({ ...isFormValid = false;
-		// } else {
-		// 	setFormValidState(state => ({ ...state, tag: true })); // setFormValidState({ ...isFormValid = true;
-		// }
+
+		// Проверка поля date
 		if (!formProps.date) {
-			setFormValidState(state => ({ ...state, date: false })); // setFormValidState({ ...isFormValid = false;
+			setFormValidState(state => ({ ...state, date: false }));
+			isFormValid = false; // Устанавливаем флаг в false при ошибке валидации
 		} else {
-			setFormValidState(state => ({ ...state, date: true })); // setFormValidState({ ...isFormValid = true;
+			setFormValidState(state => ({ ...state, date: true }));
 		}
+
+		// Проверка поля post
 		if (!formProps.post?.trim().length) {
-			setFormValidState(state => ({ ...state, post: false })); // setFormValidState({ ...isFormValid = false;
+			setFormValidState(state => ({ ...state, post: false }));
+			isFormValid = false; // Устанавливаем флаг в false при ошибке валидации
 		} else {
-			setFormValidState(state => ({ ...state, post: true })); // setFormValidState({ ...isFormValid = true;
+			setFormValidState(state => ({ ...state, post: true }));
 		}
+
 		if (!isFormValid) {
-			return;
+			return; // Прекращаем отправку формы, если есть ошибки
 		}
 		onSubmit(formProps);
 	};
 
 	return (
-		<form className='journal-form' onSubmit={addJournalItem}>
-			<input
-				type='text'
-				name='title'
-				style={{
-					border: formValidState.title ? undefined : 'red solid 2px'
-				}}
-			/>
-			<input
-				type='date'
-				name='date'
-				style={{
-					border: formValidState.date ? undefined : 'red solid 2px'
-				}}
-			/>
-			<input
-				type='text'
-				name='tag'
-				// style={{
-				// 	border: formValidState.tag ? undefined : 'red solid 2px'
-				// }}
-			/>
+		<form className={styles['journal-form']} onSubmit={addJournalItem}>
+			<div>
+				<input
+					type='text'
+					name='title'
+					className={cn(styles['input-title'], {
+						[styles['invalid']]: !formValidState.title,
+					})}
+				/>
+			</div>
+			<div className={styles['form-row']}>
+				<label htmlFor='date' className={styles['form-label']}>
+					<img src='/calendar.svg' alt='Иконка календаря' />
+					<span>Дата</span>
+				</label>
+				<input
+					type='date'
+					name='date'
+					id='date'
+					className={cn(styles['input-date'], {
+						[styles['invalid']]: !formValidState.date
+					})}
+				/>
+			</div>
+			<div className={styles['form-row']}>
+				<label htmlFor='tag' className={styles['form-label']}>
+					<img src='/folder.svg' alt='Иконка папки' />
+					<span>Метки</span>
+				</label>
+				<input type='text' name='tag' id='tag' className={styles['input']}/>
+			</div>
 			<textarea
 				name='post'
-				id=''
 				cols='30'
 				rows='10'
-				style={{
-					border: formValidState.post ? undefined : 'red solid 2px'
-				}}
+				className={`${styles['input']} ${
+					formValidState.post ? '' : styles['invalid']
+				}`}
 			></textarea>
 			<Button text='Сохранить' />
 		</form>
