@@ -52,7 +52,7 @@ function JournalForm({ onSubmit }) {
 					type='text'
 					name='title'
 					className={cn(styles['input-title'], {
-						[styles['invalid']]: !formValidState.title,
+						[styles['invalid']]: !formValidState.title
 					})}
 				/>
 			</div>
