@@ -1,7 +1,14 @@
 import styles from './JournalForm.module.css';
 import Button from '../Button/Button';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import cn from 'classnames';
+
+// Начальное состояние валидности полей формы
+const INITIAL_STATE = {
+	title: true,
+	post: true,
+	date: true
+};
 
 function JournalForm({ onSubmit }) {
 	const [formValidState, setFormValidState] = useState({
@@ -9,6 +16,18 @@ function JournalForm({ onSubmit }) {
 		post: true,
 		date: true
 	});
+
+	useEffect(() => {
+		let timerId;
+		// Если есть невалидные поля, сбрасываем состояние валидности через 2 секунды
+		if (!formValidState.title || !formValidState.date || !formValidState.post) {
+			timerId = setTimeout(() => setFormValidState(INITIAL_STATE), 2000); // исправлено: setTimeout вместо setTimeOut и удалён импорт
+		}
+		return () => {
+			clearTimeout(timerId);
+		};
+	}, [formValidState]);
+
 	const addJournalItem = (e) => {
 		e.preventDefault();
 		const formData = new FormData(e.target);
